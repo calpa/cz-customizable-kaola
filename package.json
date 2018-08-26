@@ -1,25 +1,24 @@
 {
   "version": "0.0.0-semantically-released",
-  "name": "cz-customizable",
+  "name": "cz-customizable-kaola",
   "description": "Commitizen customizable adapter following the conventional-changelog format.",
   "main": "index.js",
   "scripts": {
-    "eslint": "node_modules/eslint/bin/eslint.js *.js spec/**.js",
+    "eslint": "eslint *.js spec/**.js",
     "test": "jasmine-node spec/*.js",
-    "test:coverage": "istanbul cover -x cz-config-EXAMPLE.js node_modules/jasmine-node/bin/jasmine-node spec/",
-    "test:check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
+    "test:coverage": "istanbul cover -x cz-config-EXAMPLE.js jasmine-node spec/",
     "test:watch": "jasmine-node --color --autotest spec/ --watch .",
-    "report-coverage": "cat ./coverage/lcov.info | codecov",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
-  "homepage": "https://github.com/leonardoanalista/cz-customizable",
+  "homepage": "https://github.com/calpa/cz-customizable-kaola",
   "repository": {
     "type": "git",
-    "url": "https://github.com/leonardoanalista/cz-customizable.git"
+    "url": "https://github.com/calpa/cz-customizable-kaola.git"
   },
   "author": "Leonardo Correa <leonardoanalista@gmail.com>",
   "contributors": [
-    "Aleksey Guryanov <gurianov@gmail.com>"
+    "Aleksey Guryanov <gurianov@gmail.com>",
+    "Calpa Liu <calpaliu@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
