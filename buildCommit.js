@@ -1,19 +1,21 @@
 'use strict';
-
-
 var wrap = require('word-wrap');
 
-
 module.exports = function buildCommit(answers, config) {
-
   var maxLineWidth = 100;
 
   var wrapOptions = {
     trim: true,
     newline: '\n',
-    indent:'',
+    indent: '',
     width: maxLineWidth
   };
+
+  function addJira(jira) {
+    if (!jira) return '';
+
+    return '#' + jira + ' ';
+  }
 
   function addScope(scope) {
     if (!scope) return ': '; //it could be type === WIP. So there is no scope
@@ -26,9 +28,9 @@ module.exports = function buildCommit(answers, config) {
   }
 
   function escapeSpecialChars(result) {
-    var specialChars = ['\`'];
+    var specialChars = ['`'];
 
-    specialChars.map(function (item) {
+    specialChars.map(function(item) {
       // For some strange reason, we have to pass additional '\' slash to commitizen. Total slashes are 4.
       // If user types "feat: `string`", the commit preview should show "feat: `\\string\\`".
       // Don't worry. The git log will be "feat: `string`"
@@ -38,7 +40,12 @@ module.exports = function buildCommit(answers, config) {
   }
 
   // Hard limit this line
-  var head = (answers.type + addScope(answers.scope) + addSubject(answers.subject)).slice(0, maxLineWidth);
+  var head = (
+    addJira(answers.jira) +
+    answers.type +
+    addScope(answers.scope) +
+    addSubject(answers.subject)
+  ).slice(0, maxLineWidth);
 
   // Wrap these lines at 100 characters
   var body = wrap(answers.body, wrapOptions) || '';
@@ -52,11 +59,15 @@ module.exports = function buildCommit(answers, config) {
     result += '\n\n' + body;
   }
   if (breaking) {
-    var breakingPrefix = config && config.breakingPrefix ? config.breakingPrefix : 'BREAKING CHANGE:';
+    var breakingPrefix =
+      config && config.breakingPrefix
+        ? config.breakingPrefix
+        : 'BREAKING CHANGE:';
     result += '\n\n' + breakingPrefix + '\n' + breaking;
   }
   if (footer) {
-    var footerPrefix = config && config.footerPrefix ? config.footerPrefix : 'ISSUES CLOSED:';
+    var footerPrefix =
+      config && config.footerPrefix ? config.footerPrefix : 'ISSUES CLOSED:';
     result += '\n\n' + footerPrefix + ' ' + footer;
   }
 

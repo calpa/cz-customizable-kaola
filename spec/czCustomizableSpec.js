@@ -1,8 +1,6 @@
 'use strict';
 
-
 describe('cz-customizable', function() {
-
   var module, cz, commit;
   var rewire = require('rewire');
 
@@ -17,13 +15,14 @@ describe('cz-customizable', function() {
 
       readConfigFile: function() {
         return {
-          types: [{value: 'feat', name: 'feat: my feat'}],
-          scopes: [{name: 'myScope'}],
+          types: [{ value: 'feat', name: 'feat: my feat' }],
+          scopes: [{ name: 'myScope' }],
           scopeOverrides: {
-            fix: [{name: 'fixOverride'}]
+            fix: [{ name: 'fixOverride' }]
           },
           allowCustomScopes: true,
-          allowBreakingChanges: ['feat']
+          allowBreakingChanges: ['feat'],
+          jira: '11011'
         };
       }
     });
@@ -36,13 +35,27 @@ describe('cz-customizable', function() {
     return {
       prompt: function() {
         return {
-          then: function (cb) {
+          then: function(cb) {
             cb(answers);
           }
         };
       }
     };
   }
+
+  it('should add jira issue number', function() {
+    var answers = {
+      confirmCommit: 'yes',
+      type: 'feat',
+      subject: 'JIRA JIRA',
+      jira: '11011'
+    };
+
+    var mockCz = getMockedCz(answers);
+
+    module.prompter(mockCz, commit);
+    expect(commit).toHaveBeenCalledWith('#11011 feat: JIRA JIRA');
+  });
 
   it('should commit without confirmation', function() {
     var answers = {
@@ -95,7 +108,9 @@ describe('cz-customizable', function() {
     var mockCz = getMockedCz(answers);
     module.prompter(mockCz, commit);
 
-    expect(commit).toHaveBeenCalledWith('feat(myScope): create a new cool feature\n\n-line1\n-line2\n\nBREAKING CHANGE:\nbreaking\n\nISSUES CLOSED: my footer');
+    expect(commit).toHaveBeenCalledWith(
+      'feat(myScope): create a new cool feature\n\n-line1\n-line2\n\nBREAKING CHANGE:\nbreaking\n\nISSUES CLOSED: my footer'
+    );
   });
 
   it('should call commit() function with commit message with the minimal required fields', function() {
@@ -108,7 +123,9 @@ describe('cz-customizable', function() {
 
     var mockCz = getMockedCz(answers);
     module.prompter(mockCz, commit);
-    expect(commit).toHaveBeenCalledWith('feat(myScope): create a new cool feature');
+    expect(commit).toHaveBeenCalledWith(
+      'feat(myScope): create a new cool feature'
+    );
   });
 
   it('should suppress scope when commit type is WIP', function() {
@@ -160,10 +177,12 @@ describe('cz-customizable', function() {
   });
 
   it('should truncate first line if number of characters is higher than 200', function() {
-    var chars_100 = '0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789';
+    var chars_100 =
+      '0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789';
 
     // this string will be prepend: "ISSUES CLOSED: " = 15 chars
-    var footerChars_100 = '0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-012345';
+    var footerChars_100 =
+      '0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-0123456789-012345';
 
     var answers = {
       confirmCommit: 'yes',
@@ -180,7 +199,9 @@ describe('cz-customizable', function() {
     var firstPart = 'feat(myScope): ';
 
     var firstLine = commit.mostRecentCall.args[0].split('\n\n')[0];
-    expect(firstLine).toEqual(firstPart + answers.subject.slice(0, 100 - firstPart.length));
+    expect(firstLine).toEqual(
+      firstPart + answers.subject.slice(0, 100 - firstPart.length)
+    );
 
     //it should wrap body
     var body = commit.mostRecentCall.args[0].split('\n\n')[1];
@@ -188,8 +209,9 @@ describe('cz-customizable', function() {
 
     //it should wrap footer
     var footer = commit.mostRecentCall.args[0].split('\n\n')[2];
-    expect(footer).toEqual('ISSUES CLOSED: ' + footerChars_100 + '\nfooter-second-line');
-
+    expect(footer).toEqual(
+      'ISSUES CLOSED: ' + footerChars_100 + '\nfooter-second-line'
+    );
   });
 
   it('should call commit() function with custom breaking prefix', function() {
@@ -201,7 +223,7 @@ describe('cz-customizable', function() {
       breaking: 'breaking',
       footer: 'my footer'
     };
-    
+
     module.__set__({
       // it mocks winston logging tool
       log: {
@@ -210,10 +232,10 @@ describe('cz-customizable', function() {
 
       readConfigFile: function() {
         return {
-          types: [{value: 'feat', name: 'feat: my feat'}],
-          scopes: [{name: 'myScope'}],
+          types: [{ value: 'feat', name: 'feat: my feat' }],
+          scopes: [{ name: 'myScope' }],
           scopeOverrides: {
-            fix: [{name: 'fixOverride'}]
+            fix: [{ name: 'fixOverride' }]
           },
           allowCustomScopes: true,
           allowBreakingChanges: ['feat'],
@@ -225,7 +247,9 @@ describe('cz-customizable', function() {
     var mockCz = getMockedCz(answers);
     module.prompter(mockCz, commit);
 
-    expect(commit).toHaveBeenCalledWith('feat(myScope): create a new cool feature\n\nWARNING:\nbreaking\n\nISSUES CLOSED: my footer');
+    expect(commit).toHaveBeenCalledWith(
+      'feat(myScope): create a new cool feature\n\nWARNING:\nbreaking\n\nISSUES CLOSED: my footer'
+    );
   });
 
   it('should call commit() function with custom footer prefix', function() {
@@ -237,7 +261,7 @@ describe('cz-customizable', function() {
       breaking: 'breaking',
       footer: 'my footer'
     };
-    
+
     module.__set__({
       // it mocks winston logging tool
       log: {
@@ -246,10 +270,10 @@ describe('cz-customizable', function() {
 
       readConfigFile: function() {
         return {
-          types: [{value: 'feat', name: 'feat: my feat'}],
-          scopes: [{name: 'myScope'}],
+          types: [{ value: 'feat', name: 'feat: my feat' }],
+          scopes: [{ name: 'myScope' }],
           scopeOverrides: {
-            fix: [{name: 'fixOverride'}]
+            fix: [{ name: 'fixOverride' }]
           },
           allowCustomScopes: true,
           allowBreakingChanges: ['feat'],
@@ -260,8 +284,9 @@ describe('cz-customizable', function() {
 
     var mockCz = getMockedCz(answers);
     module.prompter(mockCz, commit);
-    
-    expect(commit).toHaveBeenCalledWith('feat(myScope): create a new cool feature\n\nBREAKING CHANGE:\nbreaking\n\nFIXES: my footer');
-  });
 
+    expect(commit).toHaveBeenCalledWith(
+      'feat(myScope): create a new cool feature\n\nBREAKING CHANGE:\nbreaking\n\nFIXES: my footer'
+    );
+  });
 });
