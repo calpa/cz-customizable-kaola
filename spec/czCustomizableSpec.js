@@ -1,5 +1,3 @@
-'use strict';
-
 describe('cz-customizable', function() {
   var module, cz, commit;
   var rewire = require('rewire');

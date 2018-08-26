@@ -1,4 +1,3 @@
-'use strict';
 var wrap = require('word-wrap');
 
 module.exports = function buildCommit(answers, config) {

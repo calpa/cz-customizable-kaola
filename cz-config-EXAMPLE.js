@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   types: [
     { value: 'feat', name: 'feat:     A new feature' },

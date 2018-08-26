@@ -7,7 +7,6 @@
     "module": true
   },
   "rules": {
-    "strict": [2, "global"],
     "quotes": [2, "single", "avoid-escape"],
     "eqeqeq": 1,
     "brace-style": 2,
@@ -22,7 +21,7 @@
     "no-unreachable": 2,
     "no-func-assign": 2,
     "no-extra-semi": 2,
-    "semi-spacing": [2, {"before": false, "after": true}],
+    "semi-spacing": [2, { "before": false, "after": true }],
     "no-extra-boolean-cast": 2,
     "no-empty": 2,
     "no-dupe-keys": 2,
