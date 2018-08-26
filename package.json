@@ -7,7 +7,9 @@
     "eslint": "eslint *.js spec/**.js",
     "test": "jasmine-node spec/*.js",
     "test:coverage": "istanbul cover -x cz-config-EXAMPLE.js jasmine-node spec/",
+    "test:check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
     "test:watch": "jasmine-node --color --autotest spec/ --watch .",
+    "report-coverage": "cat ./coverage/lcov.info | codecov",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "homepage": "https://github.com/calpa/cz-customizable-kaola",
